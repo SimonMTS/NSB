@@ -1,2 +1,2 @@
-# SSB
-Simple, modern SoundBoard
+# Simon's SoundBoard
+A simple, modern SoundBoard
