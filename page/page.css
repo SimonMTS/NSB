@@ -1,0 +1,90 @@
+#window-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 46px);
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    font-family: "Segoe MDL2 Assets";
+    font-size: 10px;
+    height: 32px;
+}
+#window-controls {
+    -webkit-app-region: no-drag;
+}
+#window-controls .button {
+    grid-row: 1 / span 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+#window-controls .button {
+    user-select: none;
+    cursor: default;
+    color: #BBB;
+}
+#window-controls .button:hover {
+    background: rgba(255,255,255,0.2);
+    color: #FFF;
+}
+#window-controls #min-button {
+    grid-column: 1;
+}
+#window-controls #max-button, #window-controls #restore-button {
+    grid-column: 2;
+}
+#window-controls #restore-button {
+    display: none;
+}
+#window-controls #close-button {
+    grid-column: 3;
+}
+#window-controls #close-button:hover {
+    background: #E81123;
+}
+
+body {
+    background-color: #424242;
+    color: white;
+}
+
+.header {
+    -webkit-app-region: drag;
+    background-color: #E65100;
+    height: 100px;
+}
+
+.title {
+    padding-top: 10px;
+    padding-left: 15px;
+    font-size: 30px;
+}
+
+.sounds {
+    background-color: #212121;
+    height: calc(100vh - 300px);
+}
+
+.output {
+    background-color: #424242;
+    height: 200px;
+}
+
+.row {
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #757575;
+}
+
+.custom-control-label::before {
+    background-color: white;
+}

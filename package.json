@@ -1,0 +1,30 @@
+{
+  "name": "ssb",
+  "version": "0.0.1",
+  "description": "A simple, modern SoundBoard",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SimonMTS/SSB.git"
+  },
+  "author": "SimonMTS",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/SimonMTS/SSB/issues"
+  },
+  "homepage": "https://github.com/SimonMTS/SSB#readme",
+  "devDependencies": {
+    "electron": "^6.0.11",
+    "electron-rebuild": "^1.8.6"
+  },
+  "dependencies": {
+    "naudiodon": "^2.1.0",
+    "node-portaudio": "^0.4.9",
+    "speaker": "^0.4.2",
+    "wav": "^1.0.2"
+  }
+}

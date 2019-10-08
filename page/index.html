@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Simon's SoundBoard</title>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self';" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="./bootstrap.min.css" />
+        <link rel="stylesheet" href="./page.css" />
+    </head>
+    <body>
+        
+        <div class="header">
+            <div class="title">SSB</div>
+
+            <div id="window-controls">
+                <div class="button" id="min-button">
+                    <span>&#xE921;</span>
+                </div>
+                <div class="button" id="max-button">
+                    <span>&#xE922;</span>
+                </div>
+                <div class="button" id="restore-button">
+                    <span>&#xE923;</span>
+                </div>
+                <div class="button" id="close-button">
+                    <span>&#xE8BB;</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row sounds">
+                <div class="col pt-2">
+
+                    <h3 id="play_test">Sounds</h3>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Yeet</td>
+                            </tr>
+                            <tr>
+                                <td>Bruh</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <div class="row output">
+                <div class="col pt-2">
+
+                    <h3>Outputs</h3>
+                    <table class="table">
+                        <tbody>
+                            <!-- <tr>
+                                <td>&DEVICE_NAME&</td>
+                                <td>
+                                    <div class="custom-control custom-checkbox float-right">
+                                        <input type="checkbox" class="custom-control-input" id="&CHECKBOX_NAME&">
+                                        <label class="custom-control-label" for="&CHECKBOX_NAME&"></label>
+                                    </div>
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <script src="./page.js"></script>
+    </body>
+</html>
