@@ -67,9 +67,23 @@ body {
     height: calc(100vh - 300px);
 }
 
+.sounds tbody tr td {
+    cursor: pointer;
+    user-select: none;
+}
+
 .output {
     background-color: #424242;
+    color: #BDBDBD;
     height: 200px;
+}
+
+input[type=radio]:checked + label {
+    color: white;
+}
+
+input:focus{
+    outline:none;
 }
 
 .row {

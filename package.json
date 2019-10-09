@@ -1,11 +1,13 @@
 {
   "name": "ssb",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A simple, modern SoundBoard",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "repository": {
     "type": "git",
@@ -20,12 +22,24 @@
   "devDependencies": {
     "electron": "^6.0.11",
     "electron-packager": "^14.0.6",
-    "electron-rebuild": "^1.8.6"
+    "electron-rebuild": "^1.8.6",
+    "electron-builder": "^21.2.0"
   },
   "dependencies": {
+    "electron-store": "^5.0.0",
     "naudiodon": "^2.1.0",
-    "node-portaudio": "^0.4.9",
-    "speaker": "^0.4.2",
     "wav": "^1.0.2"
+  },
+
+  "build": {
+    "productName": "SSB",
+    "appId": "SSB",
+    "win": {
+        "target": ["portable"],
+        "icon": "./build/icon.ico"
+    },
+    "portable": {
+        "artifactName": "SSB.exe"
+    }
   }
 }

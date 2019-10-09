@@ -1,43 +1,69 @@
 const remote = require('electron').remote;
 const wav = require('wav');
-// const portAudio = require('node-portaudio');
 const fs = require('fs');
-const Speaker = require('speaker');
+// const portAudio = require('node-portaudio');
+// const Speaker = require('speaker'); 
 const portAudio = require("naudiodon");
+const store = require('electron-store');
+const Store = new store();
+const readline = require('readline');
 
-const outputTableHTML = '<tr><td>&DEVICE_NAME&</td><td><div class="custom-control custom-checkbox float-right"><input type="checkbox" class="custom-control-input" id="&CHECKBOX_NAME&"><label class="custom-control-label" for="&CHECKBOX_NAME&"></label></div></td></tr>';
+const outputTableHTML = `
+<tr>
+    <td>
+        <div class="custom-control custom-radio">
+            <input class="form-check-input" type="radio" name="device" id="&RADIO_NAME&" value="&RADIO_NAME&" unchecked>
+            <label class="form-check-label" for="&RADIO_NAME&">
+                &DEVICE_NAME&
+            </label>
+        </div>
+    </td>
+</tr>
+`;
+
+const soundTableHTML = `
+<tr>
+    <td
+        class="playable"
+        data-location="&LOCATION&"
+    >&NAME&</td>
+</tr>
+`;
 
 (function() {
 
     {
-        
-        let devices = portAudio.getDevices()
-        for ( let d in devices ) {
-            // console.log(devices[d]);
+        const readInterface = readline.createInterface({
+            input: fs.createReadStream(process.env.PORTABLE_EXECUTABLE_DIR + '/sounds.txt'),
+            output: process.stdout,
+            console: false
+        });
 
-            if ( devices[d].maxOutputChannels <= 0 ) continue;
+        readInterface.on('line', function(line) {
+            console.log(line);
 
-            let html = outputTableHTML;
-            html = html.replace('&DEVICE_NAME&', devices[d].name);
-            html = html.replace('&CHECKBOX_NAME&', d);
+            let name = line.replace(/^.*\\/, '').replace(/\.wav/, '');
 
-            document.querySelector('.output tbody').insertAdjacentHTML('beforeend', html);
-        }
+            let html = soundTableHTML;
+            html = html.replace(/&LOCATION&/g, line);
+            html = html.replace(/&NAME&/g, name);
 
-        // playAudio();
-        // playAudio1();
-        // playAudio2();
-        // playAudio2();
+            document.querySelector('.sounds tbody').insertAdjacentHTML('beforeend', html);
 
-        const playButtons = document.querySelectorAll('.playable');
-
-        playButtons.forEach(function(elem) {
+            let elem = document.querySelector('.sounds tbody tr:last-child td');
             elem.addEventListener("click", event => {
 
-                try {
-                    playAudio(5, elem.dataset.location + elem.innerHTML + '.wav');
+                if ( document.querySelector('input[name="device"]:checked') == null ) return;
+                
+                deviceID = parseInt( document.querySelector('input[name="device"]:checked').value );
+                Store.set('deviceID', deviceID);
 
-                    let audio = new Audio(elem.dataset.location + elem.innerHTML + '.wav');
+                if (!Number.isInteger(deviceID) || deviceID < 0) return;
+
+                try {
+                    playAudio(deviceID, elem.dataset.location);
+
+                    let audio = new Audio(elem.dataset.location);
                     audio.play();
                 } catch (e) {
                     console.log(e);
@@ -45,6 +71,54 @@ const outputTableHTML = '<tr><td>&DEVICE_NAME&</td><td><div class="custom-contro
 
             }); 
         });
+    }
+
+    {
+        
+        let devices = portAudio.getDevices()
+        for ( let d in devices ) {
+            console.log(devices[d]);
+
+            if ( devices[d].maxOutputChannels <= 0 ) continue;
+
+            let html = outputTableHTML;
+            html = html.replace(/&DEVICE_NAME&/g, devices[d].name);
+            html = html.replace(/&RADIO_NAME&/g, d);
+
+            console.log( Store.get('deviceID') + "-" + d );
+
+            if ( Store.get('deviceID') != null && Store.get('deviceID') == d ) {
+                console.log('asdasdasdasdadasdadadasd');
+                html = html.replace(/unchecked/g, 'checked');
+            }
+
+            document.querySelector('.output tbody').insertAdjacentHTML('beforeend', html);
+        }
+
+        // const playButtons = document.querySelectorAll('.playable');
+
+        // playButtons.forEach(function(elem) {
+        //     elem.addEventListener("click", event => {
+
+        //         if ( document.querySelector('input[name="device"]:checked') == null ) return;
+                
+        //         deviceID = parseInt( document.querySelector('input[name="device"]:checked').value );
+        //         console.log( deviceID );
+        //         Store.set('deviceID', deviceID);
+
+        //         if (!Number.isInteger(deviceID) || deviceID < 0) return;
+
+        //         try {
+        //             playAudio(deviceID, elem.dataset.location + elem.innerHTML + '.wav');
+
+        //             let audio = new Audio(elem.dataset.location + elem.innerHTML + '.wav');
+        //             audio.play();
+        //         } catch (e) {
+        //             console.log(e);
+        //         }
+
+        //     }); 
+        // });
     }
 
     {
@@ -115,7 +189,7 @@ function playAudio( deviceID, fileLocation ) {
         
         const audioOutput = new portAudio.AudioIO({
             outOptions: {
-              channelCount: 2,
+              channelCount: format.channels,
               sampleFormat: portAudio.SampleFormat16Bit,
               sampleRate: format.sampleRate,
               deviceId: deviceID
