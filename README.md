@@ -1,5 +1,5 @@
 # Node Sound Board
-A simple, modern SoundBoard. For usage info see below.
+A simple, Nodejs SoundBoard. For usage info see below.
 ![alt text](https://raw.githubusercontent.com/SimonMTS/NSB/master/example.png?token=AD7AJFTU2ABSMDTHQSZAAPK5U52A4)
 
 NSB plays audio into two output devices, the default & one you select.
