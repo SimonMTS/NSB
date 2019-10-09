@@ -1,9 +1,9 @@
 const remote = require('electron').remote;
 const wav = require('wav');
-const portAudio = require('node-portaudio');
+// const portAudio = require('node-portaudio');
 const fs = require('fs');
 const Speaker = require('speaker');
-// const portAudioOG = require("naudiodon");
+const portAudio = require("naudiodon");
 
 const outputTableHTML = '<tr><td>&DEVICE_NAME&</td><td><div class="custom-control custom-checkbox float-right"><input type="checkbox" class="custom-control-input" id="&CHECKBOX_NAME&"><label class="custom-control-label" for="&CHECKBOX_NAME&"></label></div></td></tr>';
 
@@ -13,7 +13,7 @@ const outputTableHTML = '<tr><td>&DEVICE_NAME&</td><td><div class="custom-contro
         
         let devices = portAudio.getDevices()
         for ( let d in devices ) {
-            console.log(devices[d]);
+            // console.log(devices[d]);
 
             if ( devices[d].maxOutputChannels <= 0 ) continue;
 
@@ -27,12 +27,23 @@ const outputTableHTML = '<tr><td>&DEVICE_NAME&</td><td><div class="custom-contro
         // playAudio();
         // playAudio1();
         // playAudio2();
-        playAudio3();
+        // playAudio2();
 
-        const playButton = document.getElementById('play_test');
+        const playButtons = document.querySelectorAll('.playable');
 
-        playButton.addEventListener("click", event => {
-            playAudio3();
+        playButtons.forEach(function(elem) {
+            elem.addEventListener("click", event => {
+
+                try {
+                    playAudio(5, elem.dataset.location + elem.innerHTML + '.wav');
+
+                    let audio = new Audio(elem.dataset.location + elem.innerHTML + '.wav');
+                    audio.play();
+                } catch (e) {
+                    console.log(e);
+                }
+
+            }); 
         });
     }
 
@@ -94,26 +105,35 @@ const outputTableHTML = '<tr><td>&DEVICE_NAME&</td><td><div class="custom-contro
 
 })();
 
-function playAudio() {
+function playAudio( deviceID, fileLocation ) {
 
-    var reader = new wav.Reader();
-    const file = fs.createReadStream('./page/test.wav');
+    let reader = new wav.Reader();
+    const file = fs.createReadStream(fileLocation);
 
     reader.on('format', function (format) {
         console.log(format);
         
-        const audioOutput = new portAudio.AudioOutput({
-            channelCount: 2,
-            sampleFormat: portAudio.SampleFormat16Bit,
-            sampleRate: format.sampleRate,
-            deviceId : -1 // Use -1 or omit the deviceId to select the default device
+        const audioOutput = new portAudio.AudioIO({
+            outOptions: {
+              channelCount: 2,
+              sampleFormat: portAudio.SampleFormat16Bit,
+              sampleRate: format.sampleRate,
+              deviceId: deviceID
+            }
         });
+        
+        file.on('end', () => console.log('file end'));
+        audioOutput.on('end', () => console.log('audioOutput end'));
+        reader.on('end', () => console.log('reader end'));
 
         reader.pipe(audioOutput);
         audioOutput.start();
+        // audioOutput.quit();
     });
 
-    file.pipe(reader);
+    file.pipe(reader, {
+        end: false
+    });
 
 }
 
@@ -135,7 +155,7 @@ function playAudio1() {
 
     // Create a stream to pipe into the AudioOutput
     // Note that this does not strip the WAV header so a click will be heard at the beginning
-    const rs = fs.createReadStream('./page/test.wav');
+    const rs = fs.createReadStream('C:/Users/simon/Music/Cummy Quotes Wav/A Splash Of Cum To Seal The Deal.wav');
 
     // setup to close the output stream at the end of the read stream
     rs.on('end', () => ao.end());
@@ -161,7 +181,7 @@ function playAudio2() {
     
     // Create a stream to pipe into the AudioOutput
     // Note that this does not strip the WAV header so a click will be heard at the beginning
-    const rs = fs.createReadStream('./page/test.wav');
+    const rs = fs.createReadStream('C:/Users/simon/Music/Cummy Quotes Wav/A Splash Of Cum To Seal The Deal.wav');
     
     // setup to close the output stream at the end of the read stream
     rs.on('end', () => ao.end());
@@ -175,7 +195,7 @@ function playAudio2() {
 function playAudio3() {
 
     var reader = new wav.Reader();
-    const file = fs.createReadStream('./page/test.wav');
+    const file = fs.createReadStream('C:/Users/simon/Music/Cummy Quotes Wav/A Splash Of Cum To Seal The Deal.wav');
 
     reader.on('format', function (format) {
         // cant seem to change output devise
@@ -207,7 +227,7 @@ function playAudio4() {
     
     // Create a stream to pipe into the AudioOutput
     // Note that this does not strip the WAV header so a click will be heard at the beginning
-    var rs = fs.createReadStream('./page/test.wav');
+    var rs = fs.createReadStream('C:/Users/simon/Music/Cummy Quotes Wav/A Splash Of Cum To Seal The Deal.wav');
     
     // Start piping data and start streaming
     rs.pipe(ao);

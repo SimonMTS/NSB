@@ -19,6 +19,7 @@
   "homepage": "https://github.com/SimonMTS/SSB#readme",
   "devDependencies": {
     "electron": "^6.0.11",
+    "electron-packager": "^14.0.6",
     "electron-rebuild": "^1.8.6"
   },
   "dependencies": {
