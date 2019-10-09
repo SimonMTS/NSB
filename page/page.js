@@ -23,6 +23,7 @@ const outputTableHTML = `
 
 const soundTableHTML = `
 <tr>
+    <td>&NUMBER&</td>
     <td
         class="playable"
         data-location="&LOCATION&"
@@ -39,18 +40,21 @@ const soundTableHTML = `
             console: false
         });
 
+        lineNumber = 1;
         readInterface.on('line', function(line) {
-            console.log(line);
+            // console.log(line);
 
             let name = line.replace(/^.*\\/, '').replace(/\.wav/, '');
 
             let html = soundTableHTML;
             html = html.replace(/&LOCATION&/g, line);
             html = html.replace(/&NAME&/g, name);
+            html = html.replace(/&NUMBER&/g, lineNumber);
+            lineNumber++;
 
             document.querySelector('.sounds tbody').insertAdjacentHTML('beforeend', html);
 
-            let elem = document.querySelector('.sounds tbody tr:last-child td');
+            let elem = document.querySelector('.sounds tbody tr:last-child td:last-child');
             elem.addEventListener("click", event => {
 
                 if ( document.querySelector('input[name="device"]:checked') == null ) return;
@@ -64,6 +68,7 @@ const soundTableHTML = `
                     playAudio(deviceID, elem.dataset.location);
 
                     let audio = new Audio(elem.dataset.location);
+                    audio.volume = 0.1;
                     audio.play();
                 } catch (e) {
                     console.log(e);
@@ -77,7 +82,7 @@ const soundTableHTML = `
         
         let devices = portAudio.getDevices()
         for ( let d in devices ) {
-            console.log(devices[d]);
+            // console.log(devices[d]);
 
             if ( devices[d].maxOutputChannels <= 0 ) continue;
 
@@ -85,40 +90,14 @@ const soundTableHTML = `
             html = html.replace(/&DEVICE_NAME&/g, devices[d].name);
             html = html.replace(/&RADIO_NAME&/g, d);
 
-            console.log( Store.get('deviceID') + "-" + d );
+            // console.log( Store.get('deviceID') + "-" + d );
 
             if ( Store.get('deviceID') != null && Store.get('deviceID') == d ) {
-                console.log('asdasdasdasdadasdadadasd');
                 html = html.replace(/unchecked/g, 'checked');
             }
 
             document.querySelector('.output tbody').insertAdjacentHTML('beforeend', html);
         }
-
-        // const playButtons = document.querySelectorAll('.playable');
-
-        // playButtons.forEach(function(elem) {
-        //     elem.addEventListener("click", event => {
-
-        //         if ( document.querySelector('input[name="device"]:checked') == null ) return;
-                
-        //         deviceID = parseInt( document.querySelector('input[name="device"]:checked').value );
-        //         console.log( deviceID );
-        //         Store.set('deviceID', deviceID);
-
-        //         if (!Number.isInteger(deviceID) || deviceID < 0) return;
-
-        //         try {
-        //             playAudio(deviceID, elem.dataset.location + elem.innerHTML + '.wav');
-
-        //             let audio = new Audio(elem.dataset.location + elem.innerHTML + '.wav');
-        //             audio.play();
-        //         } catch (e) {
-        //             console.log(e);
-        //         }
-
-        //     }); 
-        // });
     }
 
     {
@@ -178,6 +157,29 @@ const soundTableHTML = `
     }
 
 })();
+
+function playAudioGlobal( i ) {
+
+    let elem = document.querySelector('.sounds tbody tr:nth-child('+i+') td:last-child');
+    
+    if ( document.querySelector('input[name="device"]:checked') == null ) return;
+                
+    deviceID = parseInt( document.querySelector('input[name="device"]:checked').value );
+    Store.set('deviceID', deviceID);
+
+    if (!Number.isInteger(deviceID) || deviceID < 0) return;
+
+    try {
+        playAudio(deviceID, elem.dataset.location);
+
+        let audio = new Audio(elem.dataset.location);
+        audio.volume = 0.1;
+        audio.play();
+    } catch (e) {
+        console.log(e);
+    }
+
+};
 
 function playAudio( deviceID, fileLocation ) {
 

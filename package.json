@@ -1,5 +1,5 @@
 {
-  "name": "ssb",
+  "name": "nsb",
   "version": "0.0.3",
   "description": "A simple, modern SoundBoard",
   "main": "main.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SimonMTS/SSB.git"
+    "url": "git+https://github.com/SimonMTS/NSB.git"
   },
   "author": "SimonMTS",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/SimonMTS/SSB/issues"
+    "url": "https://github.com/SimonMTS/NSB/issues"
   },
-  "homepage": "https://github.com/SimonMTS/SSB#readme",
+  "homepage": "https://github.com/SimonMTS/NSB#readme",
   "devDependencies": {
     "electron": "^6.0.11",
     "electron-packager": "^14.0.6",
@@ -32,14 +32,14 @@
   },
 
   "build": {
-    "productName": "SSB",
-    "appId": "SSB",
+    "productName": "NSB",
+    "appId": "NSB",
     "win": {
         "target": ["portable"],
         "icon": "./build/icon.ico"
     },
     "portable": {
-        "artifactName": "SSB.exe"
+        "artifactName": "NSB.exe"
     }
   }
 }
