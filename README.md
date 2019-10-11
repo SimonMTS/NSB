@@ -20,7 +20,9 @@ C:\path\to\test sound 2.wav
 C:\path\to\test sound 3.wav
 ```
 
-The numpad keys act as shortcuts to play the first 9 sounds, num1 => 1, etc.
+Numpad 0 + the numpad keys act as shortcuts to play the first 9 sounds, num0+num1 => 1, etc.
+
+Num0 + del key stops the active audio.
 
 
 [virtual audio cable]: https://www.vb-audio.com/Cable/

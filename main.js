@@ -1,6 +1,8 @@
 const { app, BrowserWindow, globalShortcut  } = require('electron');
 const ioHook = require('iohook');
 
+// to build : npm run dist
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
@@ -12,8 +14,7 @@ function createWindow () {
         frame: false,
         backgroundColor: '#212121',
         webPreferences: {
-            nodeIntegration: true,
-            preload: './preload.js'
+            nodeIntegration: true
         },
         icon: './page/logo.png'
     });
@@ -49,7 +50,7 @@ function createWindow () {
 
     ioHook.start();
 
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
 
     win.on('closed', () => {
         win = null;

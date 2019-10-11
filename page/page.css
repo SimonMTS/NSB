@@ -112,6 +112,9 @@ input:focus{
 ::-webkit-scrollbar-thumb {
     background: #757575;
 }
+::-webkit-scrollbar-thumb:hover {
+    background: #9E9E9E;
+}
 
 .custom-control-label::before {
     background-color: white;
