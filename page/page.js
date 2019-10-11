@@ -31,6 +31,9 @@ const soundTableHTML = `
 </tr>
 `;
 
+let audioOutputs = null;
+let audioElems = null;
+
 (function() {
 
     {
@@ -56,23 +59,8 @@ const soundTableHTML = `
 
             let elem = document.querySelector('.sounds tbody tr:last-child td:last-child');
             elem.addEventListener("click", event => {
-
-                if ( document.querySelector('input[name="device"]:checked') == null ) return;
                 
-                deviceID = parseInt( document.querySelector('input[name="device"]:checked').value );
-                Store.set('deviceID', deviceID);
-
-                if (!Number.isInteger(deviceID) || deviceID < 0) return;
-
-                try {
-                    playAudio(deviceID, elem.dataset.location);
-
-                    let audio = new Audio(elem.dataset.location);
-                    audio.volume = 0.1;
-                    audio.play();
-                } catch (e) {
-                    console.log(e);
-                }
+                playAudio( elem.dataset.location );
 
             }); 
         });
@@ -158,30 +146,48 @@ const soundTableHTML = `
 
 })();
 
-function playAudioGlobal( i ) {
+function playAudioGlobal( index ) {
 
-    let elem = document.querySelector('.sounds tbody tr:nth-child('+i+') td:last-child');
-    
+    let elem = document.querySelector('.sounds tbody tr:nth-child('+index+') td:last-child');
+
+    playAudio( elem.dataset.location );
+
+};
+
+function playAudio( location ) {
+
     if ( document.querySelector('input[name="device"]:checked') == null ) return;
-                
+
     deviceID = parseInt( document.querySelector('input[name="device"]:checked').value );
     Store.set('deviceID', deviceID);
 
     if (!Number.isInteger(deviceID) || deviceID < 0) return;
 
     try {
-        playAudio(deviceID, elem.dataset.location);
+        if ( audioOutputs != null || audioElems != null) {
+            audioOutputs.quit();
+            audioElems.pause();
+            audioElems.remove();
 
-        let audio = new Audio(elem.dataset.location);
-        audio.volume = 0.1;
-        audio.play();
+            setTimeout(function() { playAudio( location ); }, 500);
+
+            audioElems = null;
+            audioOutputs = null;
+            return;
+        }
+
+        playTodevice(deviceID, location);
+
+        audioElems = new Audio(location);
+        audioElems.volume = 0.1;
+        audioElems.play();
     } catch (e) {
         console.log(e);
     }
 
-};
+}
 
-function playAudio( deviceID, fileLocation ) {
+function playTodevice( deviceID, fileLocation ) {
 
     let reader = new wav.Reader();
     const file = fs.createReadStream(fileLocation);
@@ -189,7 +195,7 @@ function playAudio( deviceID, fileLocation ) {
     reader.on('format', function (format) {
         console.log(format);
         
-        const audioOutput = new portAudio.AudioIO({
+        audioOutputs = new portAudio.AudioIO({
             outOptions: {
               channelCount: format.channels,
               sampleFormat: portAudio.SampleFormat16Bit,
@@ -199,12 +205,11 @@ function playAudio( deviceID, fileLocation ) {
         });
         
         file.on('end', () => console.log('file end'));
-        audioOutput.on('end', () => console.log('audioOutput end'));
+        audioOutputs.on('end', () => console.log('audioOutput end'));
         reader.on('end', () => console.log('reader end'));
 
-        reader.pipe(audioOutput);
-        audioOutput.start();
-        // audioOutput.quit();
+        reader.pipe(audioOutputs);
+        audioOutputs.start();
     });
 
     file.pipe(reader, {
@@ -213,100 +218,13 @@ function playAudio( deviceID, fileLocation ) {
 
 }
 
-function playAudio1() {
+function stopAudio() {
 
-    const fs = require('fs');
-    // const portAudio = require('node-portaudio');
+    audioOutputs.quit();
+    audioElems.pause();
+    audioElems.remove();
 
-    // Create an instance of AudioOutput, which is a WriteableStream
-    const ao = new portAudio.AudioOutput({
-        channelCount: 2,
-        sampleFormat: portAudio.SampleFormat16Bit,
-        sampleRate: 48000,
-        deviceId : -1 // Use -1 or omit the deviceId to select the default device
-    });
-
-    // handle errors from the AudioOutput
-    ao.on('error', err => console.error);
-
-    // Create a stream to pipe into the AudioOutput
-    // Note that this does not strip the WAV header so a click will be heard at the beginning
-    const rs = fs.createReadStream('C:/Users/simon/Music/Cummy Quotes Wav/A Splash Of Cum To Seal The Deal.wav');
-
-    // setup to close the output stream at the end of the read stream
-    rs.on('end', () => ao.end());
-
-    // Start piping data and start streaming
-    rs.pipe(ao);
-    ao.start();
-
-}
-
-function playAudio2() {
-
-    // Create an instance of AudioOutput, which is a WriteableStream
-    const ao = new portAudio.AudioOutput({
-        channelCount: 2,
-        sampleFormat: portAudio.SampleFormat16Bit,
-        sampleRate: 48000,
-        deviceId : -1 // Use -1 or omit the deviceId to select the default device
-    });
+    audioElems = null;
+    audioOutputs = null;
     
-    // handle errors from the AudioOutput
-    ao.on('error', err => console.error);
-    
-    // Create a stream to pipe into the AudioOutput
-    // Note that this does not strip the WAV header so a click will be heard at the beginning
-    const rs = fs.createReadStream('C:/Users/simon/Music/Cummy Quotes Wav/A Splash Of Cum To Seal The Deal.wav');
-    
-    // setup to close the output stream at the end of the read stream
-    rs.on('end', () => ao.end());
-    
-    // Start piping data and start streaming
-    rs.pipe(ao);
-    ao.start();
-
-}
-
-function playAudio3() {
-
-    var reader = new wav.Reader();
-    const file = fs.createReadStream('C:/Users/simon/Music/Cummy Quotes Wav/A Splash Of Cum To Seal The Deal.wav');
-
-    reader.on('format', function (format) {
-        // cant seem to change output devise
-        format.device = "CABLE Input (VB-Audio Virtual Cable)";
-
-        console.log(format);
-        reader.pipe(new Speaker(format));
-    });
-
-    file.pipe(reader, {
-        end: false
-    });
-
-}
-
-function playAudio4() {
-
-    const fs = require('fs');
- 
-    // Create an instance of AudioIO with outOptions, which will return a WritableStream
-    var ao = new portAudio.AudioIO({
-    outOptions: {
-        channelCount: 2,
-        sampleFormat: portAudio.SampleFormat16Bit,
-        sampleRate: 48000,
-        deviceId: -1 // Use -1 or omit the deviceId to select the default device
-    }
-    });
-    
-    // Create a stream to pipe into the AudioOutput
-    // Note that this does not strip the WAV header so a click will be heard at the beginning
-    var rs = fs.createReadStream('C:/Users/simon/Music/Cummy Quotes Wav/A Splash Of Cum To Seal The Deal.wav');
-    
-    // Start piping data and start streaming
-    rs.pipe(ao);
-    ao.start();
-
 }

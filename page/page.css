@@ -72,10 +72,24 @@ body {
     user-select: none;
 }
 
+.sounds tr:hover {
+    background-color: #424242;
+}
+
+.output tr:hover {
+    background-color: #212121;
+}
+
 .output {
     background-color: #424242;
     color: #BDBDBD;
     height: 200px;
+}
+
+.output tbody tr td label,
+.output tbody tr td input {
+    cursor: pointer;
+    user-select: none;
 }
 
 input[type=radio]:checked + label {
